@@ -4,6 +4,9 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
+namespace naive_demo
+{
+
 class MyBackFunc
 {
 public:
@@ -41,3 +44,5 @@ private:
     float m_midx;
     float m_midy;
 };
+
+} // namespace(naive_demo)

@@ -8,6 +8,9 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
+namespace naive_demo
+{
+
 class MyBilinearSampler
 {
 public:
@@ -82,3 +85,5 @@ private:
     std::unique_ptr<cv::Mat1b> m_matdest;
     MapFuncType m_mapfunc;
 };
+
+} // namespace(naive_demo)

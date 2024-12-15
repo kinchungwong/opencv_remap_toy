@@ -14,6 +14,9 @@
 #include "naive_demo/my_back_func.h"
 #include "naive_demo/my_bilinear_sampler.h"
 
+namespace naive_demo
+{
+
 void init_background(cv::Mat1b& dest, int band_thickness)
 {
     const auto sz = dest.size();
@@ -34,8 +37,11 @@ void init_background(cv::Mat1b& dest, int band_thickness)
     }
 }
 
+} // namespace(naive_demo)
+
 int naive_demo_main(int argc, char** argv)
 {
+    using namespace naive_demo;
     cv::Mat1b mat(720, 720);
     init_background(mat, 24);
     cv::Mat1b mat2(720, 720);
