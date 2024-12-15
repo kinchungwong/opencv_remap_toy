@@ -69,6 +69,9 @@ protected:
     virtual bool populate_source_coords(cv::Rect destrect, int& num_q_bits, 
         cv::Mat1i& srcxq, cv::Mat1i& srcyq) const;
 
+    virtual bool populate_source_coords_scalar(float destx, float desty, 
+        float& srcx, float& srcy) const;
+
     virtual bool clamp_source_coords(cv::Rect destrect, int num_q_bits, 
         cv::Mat1i& srcxq, cv::Mat1i& srcyq) const;
 

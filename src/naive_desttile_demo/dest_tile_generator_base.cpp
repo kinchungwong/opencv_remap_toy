@@ -14,6 +14,41 @@ DestTileGeneratorBase::DestTileGeneratorBase(const cv::Mat1b& matsrc, cv::Mat1b&
 bool DestTileGeneratorBase::populate_source_coords(cv::Rect destrect, int& num_q_bits, 
     cv::Mat1i& srcxq, cv::Mat1i& srcyq) const
 {
+    // As a virtual function, this function can be overridden.
+    // If that is the case, this constant has no relevance.
+    static constexpr const int DEFAULT_NUM_Q_BITS = 8;
+    num_q_bits = DEFAULT_NUM_Q_BITS;
+    const cv::Size tilesz = destrect.size();
+    int q_scale = (1 << num_q_bits);
+    for (int row = 0; row < tilesz.height; ++row)
+    {
+        for (int col = 0; col < tilesz.width; ++col)
+        {
+            int destx = col + destrect.x;
+            int desty = row + destrect.y;
+            float srcx, srcy;
+            bool good = this->populate_source_coords_scalar(
+                static_cast<float>(destx),
+                static_cast<float>(desty),
+                static_cast<float&>(srcx),
+                static_cast<float&>(srcy)
+            );
+            if (!good)
+            {
+                return false;
+            }
+            int& refxq = srcxq.at<int>(row, col);
+            refxq = cv::saturate_cast<int>(srcx * q_scale);
+            int& refyq = srcyq.at<int>(row, col);
+            refyq = cv::saturate_cast<int>(srcy * q_scale);
+        }
+    }
+    return true;
+}
+
+bool DestTileGeneratorBase::populate_source_coords_scalar(float destx, float desty, 
+    float& srcx, float& srcy) const
+{
     return false;
 }
 

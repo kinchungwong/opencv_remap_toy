@@ -13,6 +13,8 @@
 #include "naive_demo/naive_demo.h"
 #include "naive_demo/my_back_func.h"
 #include "naive_demo/my_bilinear_sampler.h"
+#include "demo_utils/chrono_timer.h"
+
 
 namespace naive_demo
 {
@@ -54,7 +56,10 @@ int naive_demo_main(int argc, char** argv)
     });
     MyBackFunc backfun(mat2.size(), coefs);
     MyBilinearSampler sampler(mat, mat2, backfun);
-    sampler(cv::Rect(0, 0, 720, 720));
+    {
+        EzTimer timer("naive_demo_main");
+        sampler(cv::Rect(0, 0, 720, 720));
+    }
     cv::imshow("opencv_remap_toy", mat2);
     cv::waitKey(0);
     cv::destroyAllWindows();

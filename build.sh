@@ -5,6 +5,7 @@ set -x
 
 CMAKE_OPTS=""
 # CMAKE_OPTS="--trace-expand"
+CMAKE_OPTS="${CMAKE_OPTS} -DCMAKE_BUILD_TYPE=Release"
 
 test -d "./opencv_build"
 

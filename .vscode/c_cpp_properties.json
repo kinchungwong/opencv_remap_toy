@@ -3,7 +3,11 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/tests/**",
+                "${workspaceFolder}/opencv_src/include/**",
+                "${workspaceFolder}/opencv_src/modules/*/include",
+                "${workspaceFolder}/opencv_build"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
