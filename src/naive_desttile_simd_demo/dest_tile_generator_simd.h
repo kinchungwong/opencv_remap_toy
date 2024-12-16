@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <optional>
 #include <opencv2/core.hpp>
 #include "naive_desttile_demo/dest_tile_generator_base.h"
@@ -29,6 +30,7 @@ protected:
 
 protected:
     mutable std::optional<bool> m_has_avx512;
+    mutable std::atomic<uint64_t> m_tsc_total;
 };
 
 } // namespace(naive_desttile_simd_demo)
