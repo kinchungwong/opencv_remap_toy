@@ -21,7 +21,7 @@ DestTileGeneratorSimd::~DestTileGeneratorSimd()
     }
 }
 
-bool DestTileGeneratorSimd::populate_dest_bilinear(cv::Rect destrect, int num_q_bits, 
+bool DestTileGeneratorSimd::populate_dest_pixels(cv::Rect destrect, int num_q_bits, 
     const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const
 {
     bool has_avx512 = this->get_has_avx512();
@@ -30,34 +30,34 @@ bool DestTileGeneratorSimd::populate_dest_bilinear(cv::Rect destrect, int num_q_
     {
         if (has_avx512 && unchecked)
         {
-            if (this->populate_dest_bilinear_qzero_avx512_unchecked(destrect, num_q_bits, srcxq, srcyq))
+            if (this->populate_dest_pixels_qzero_avx512_unchecked(destrect, num_q_bits, srcxq, srcyq))
             {
                 return true;
             }
         }
-        return this->populate_dest_bilinear_qzero(destrect, num_q_bits, srcxq, srcyq);
+        return this->populate_dest_pixels_qzero(destrect, num_q_bits, srcxq, srcyq);
     }
     else if (num_q_bits >= 1 && num_q_bits <= 8)
     {
         if (has_avx512 && unchecked)
         {
-            if (this->populate_dest_bilinear_q_avx512_unchecked(destrect, num_q_bits, srcxq, srcyq))
+            if (this->populate_dest_pixels_q_avx512_unchecked(destrect, num_q_bits, srcxq, srcyq))
             {
                 return true;
             }
         }
-        return this->populate_dest_bilinear_q(destrect, num_q_bits, srcxq, srcyq);
+        return this->populate_dest_pixels_q(destrect, num_q_bits, srcxq, srcyq);
     }
     return false;
 }
 
-bool DestTileGeneratorSimd::populate_dest_bilinear_q_avx512_unchecked(cv::Rect destrect, 
+bool DestTileGeneratorSimd::populate_dest_pixels_q_avx512_unchecked(cv::Rect destrect, 
     int num_q_bits, const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const
 {
     return false;
 }
 
-bool DestTileGeneratorSimd::populate_dest_bilinear_qzero_avx512_unchecked(cv::Rect destrect, 
+bool DestTileGeneratorSimd::populate_dest_pixels_qzero_avx512_unchecked(cv::Rect destrect, 
     int num_q_bits, const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const
 {
     if (num_q_bits != 0)
@@ -65,7 +65,7 @@ bool DestTileGeneratorSimd::populate_dest_bilinear_qzero_avx512_unchecked(cv::Re
         return false;
     }
 #if CV_SIMD512
-#pragma message "DestTileGeneratorSimd::populate_dest_bilinear_qzero_avx512_unchecked(...)"
+#pragma message "DestTileGeneratorSimd::populate_dest_pixels_qzero_avx512_unchecked(...)"
 #pragma message "This function contains missing critical code and may lead to invalid memory accesses and/or crashes."
     uint64_t tsc_start = __rdtsc();
     const cv::Size tilesz = destrect.size();

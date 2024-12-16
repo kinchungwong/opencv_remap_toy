@@ -15,13 +15,13 @@ protected:
     ~DestTileGeneratorSimd();
 
 protected:
-    bool populate_dest_bilinear(cv::Rect destrect, int num_q_bits, 
+    bool populate_dest_pixels(cv::Rect destrect, int num_q_bits, 
         const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const override;
 
-    virtual bool populate_dest_bilinear_q_avx512_unchecked(cv::Rect destrect, 
+    virtual bool populate_dest_pixels_q_avx512_unchecked(cv::Rect destrect, 
         int num_q_bits, const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const;
 
-    virtual bool populate_dest_bilinear_qzero_avx512_unchecked(cv::Rect destrect, 
+    virtual bool populate_dest_pixels_qzero_avx512_unchecked(cv::Rect destrect, 
         int num_q_bits, const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const;
 
     virtual bool get_has_avx512() const;

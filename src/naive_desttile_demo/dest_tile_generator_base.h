@@ -78,13 +78,13 @@ protected:
     virtual bool clamp_source_coords_scalar(cv::Rect destrect, int num_q_bits, 
         cv::Mat1i& srcxq, cv::Mat1i& srcyq) const;
 
-    virtual bool populate_dest_bilinear(cv::Rect destrect, int num_q_bits, 
+    virtual bool populate_dest_pixels(cv::Rect destrect, int num_q_bits, 
         const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const;
 
-    virtual bool populate_dest_bilinear_q(cv::Rect destrect, int num_q_bits, 
+    virtual bool populate_dest_pixels_q(cv::Rect destrect, int num_q_bits, 
         const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const;
 
-    virtual bool populate_dest_bilinear_qzero(cv::Rect destrect, int num_q_bits, 
+    virtual bool populate_dest_pixels_qzero(cv::Rect destrect, int num_q_bits, 
         const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const;
 
 public:

@@ -93,20 +93,20 @@ bool DestTileGeneratorBase::clamp_source_coords_scalar(cv::Rect destrect, int nu
     return true;
 }
 
-bool DestTileGeneratorBase::populate_dest_bilinear(cv::Rect destrect, int num_q_bits, 
+bool DestTileGeneratorBase::populate_dest_pixels(cv::Rect destrect, int num_q_bits, 
     const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const
 {
     if (num_q_bits == 0)
     {
-        return this->populate_dest_bilinear_qzero(destrect, num_q_bits, srcxq, srcyq);
+        return this->populate_dest_pixels_qzero(destrect, num_q_bits, srcxq, srcyq);
     }
     else
     {
-        return this->populate_dest_bilinear_q(destrect, num_q_bits, srcxq, srcyq);
+        return this->populate_dest_pixels_q(destrect, num_q_bits, srcxq, srcyq);
     }
 }
 
-bool DestTileGeneratorBase::populate_dest_bilinear_q(cv::Rect destrect, int num_q_bits, 
+bool DestTileGeneratorBase::populate_dest_pixels_q(cv::Rect destrect, int num_q_bits, 
     const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const
 {
     if (num_q_bits < 0 || num_q_bits > 8)
@@ -146,7 +146,7 @@ bool DestTileGeneratorBase::populate_dest_bilinear_q(cv::Rect destrect, int num_
     return true;
 }
 
-bool DestTileGeneratorBase::populate_dest_bilinear_qzero(cv::Rect destrect, int num_q_bits, 
+bool DestTileGeneratorBase::populate_dest_pixels_qzero(cv::Rect destrect, int num_q_bits, 
     const cv::Mat1i& srcxq, const cv::Mat1i& srcyq) const
 {
     if (num_q_bits != 0)
@@ -175,7 +175,7 @@ bool DestTileGeneratorBase::operator() (cv::Rect destrect) const
 {
     static constexpr const char* msg_where_pop = "DestTileGeneratorBase::populate_source_coords()";
     static constexpr const char* msg_where_clamp = "DestTileGeneratorBase::clamp_source_coords()";
-    static constexpr const char* msg_where_bilinear = "DestTileGeneratorBase::populate_dest_bilinear()";
+    static constexpr const char* msg_where_bilinear = "DestTileGeneratorBase::populate_dest_pixels()";
     static constexpr const char* msg_bad_q = "Bad number of fractional bits";
     this->validate_dest_rect_else_throw(destrect);
     const cv::Size destsz = destrect.size();
@@ -196,7 +196,7 @@ bool DestTileGeneratorBase::operator() (cv::Rect destrect) const
     {
         throw std::runtime_error(msg_where_clamp);
     }
-    good = this->populate_dest_bilinear(destrect, num_q_bits, srcxq, srcyq);
+    good = this->populate_dest_pixels(destrect, num_q_bits, srcxq, srcyq);
     if (!good)
     {
         throw std::runtime_error(msg_where_bilinear);
