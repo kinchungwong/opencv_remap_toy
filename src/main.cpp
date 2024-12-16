@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <opencv2/core.hpp>
+#include "simd_caps_info/simd_caps_info.h"
 #include "naive_demo/naive_demo.h"
 #include "naive_desttile_demo/naive_desttile_demo.h"
 
@@ -36,6 +37,7 @@ struct MainFuncTableEntry
 static constexpr const MainFuncTableEntry stc_main_func_table[] =
 {
     { &print_opencv_build_info, "print_opencv_build_info" },
+    { &simd_caps_info_main, "simd_caps_info_main" },
     { &naive_demo_main, "naive_demo_main" },
     { &naive_desttile_demo_main_1, "naive_desttile_demo_main_1" },
     { &naive_desttile_demo_main_2, "naive_desttile_demo_main_2" },
