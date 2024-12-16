@@ -6,6 +6,7 @@
 #include "simd_caps_info/simd_caps_info.h"
 #include "naive_demo/naive_demo.h"
 #include "naive_desttile_demo/naive_desttile_demo.h"
+#include "naive_desttile_simd_demo/naive_desttile_simd_demo.h"
 
 int print_opencv_build_info(int argc, char** argv)
 {
@@ -42,6 +43,7 @@ static constexpr const MainFuncTableEntry stc_main_func_table[] =
     { &naive_desttile_demo_main_1, "naive_desttile_demo_main_1" },
     { &naive_desttile_demo_main_2, "naive_desttile_demo_main_2" },
     { &naive_desttile_demo_main_3, "naive_desttile_demo_main_3" },
+    { &naive_desttile_simd_demo_4, "naive_desttile_simd_demo_4" },
 };
 
 int select_execute_return(int argc, char** argv)
