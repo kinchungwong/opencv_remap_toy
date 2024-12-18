@@ -17,7 +17,7 @@ DestTileGeneratorSimd::~DestTileGeneratorSimd()
     int64_t tsc_total = this->m_tsc_total;
     if (tsc_total)
     {
-        std::cout << "TSC total: " << tsc_total << std::endl;
+        std::cout << "(DestTileGeneratorSimd) TSC total: " << tsc_total << std::endl;
     }
 }
 
