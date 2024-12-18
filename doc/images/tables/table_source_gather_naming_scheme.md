@@ -1,0 +1,22 @@
+### Table - naming scheme for source gather functions
+
+  - Byte size per arithmetic element (e.g. 1 = byte, signed or unsigned)
+  - Number of arithmetic elements to be read consecutively from each row
+    - Nearest: 1 x channels
+    - Bilinear: 2 x channels
+    - Bicubic: 4 x channels
+    - Lanczos3: 6 x channels
+    - Lanczos4: 8 x channels
+  - Instruction load width per element (not necessarily same as arithmetic element)
+    - epi8: 8-bit
+    - epi32: 32-bit
+    - epi64: 64-bit
+  - Vectorization width (total width of a widest SIMD load)
+    - SSE2, NEON: 128-bit
+    - AVX2: 256-bit
+    - AVX-512: 512-bit
+  - Pseudo-vectorizations
+    - When vectorization is not available, hard-coded hand-unrolled loads are used.
+  - CPU capability flags
+    - Post-SSE2 flags required for arithmetic processing (e.g. PMULLD requires SSE41)
+    - Specific AVX-512 sub-flags required for arithmetic processing (e.g. BW, DQ, VBMI, VBMI2, IFMA)
