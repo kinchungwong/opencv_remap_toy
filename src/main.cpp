@@ -44,6 +44,7 @@ static constexpr const MainFuncTableEntry stc_main_func_table[] =
     { &naive_desttile_demo_main_2, "naive_desttile_demo_main_2" },
     { &naive_desttile_demo_main_3, "naive_desttile_demo_main_3" },
     { &naive_desttile_simd_demo_4, "naive_desttile_simd_demo_4" },
+    { &naive_desttile_simd_demo_5, "naive_desttile_simd_demo_5" },
 };
 
 int select_execute_return(int argc, char** argv)
