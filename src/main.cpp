@@ -7,6 +7,7 @@
 #include "naive_demo/naive_demo.h"
 #include "naive_desttile_demo/naive_desttile_demo.h"
 #include "naive_desttile_simd_demo/naive_desttile_simd_demo.h"
+#include "bicubic_simd_demo/detail/bicubic_simd_detail_main.h"
 
 int print_opencv_build_info(int argc, char** argv)
 {
@@ -45,6 +46,7 @@ static constexpr const MainFuncTableEntry stc_main_func_table[] =
     { &naive_desttile_demo_main_3, "naive_desttile_demo_main_3" },
     { &naive_desttile_simd_demo_4, "naive_desttile_simd_demo_4" },
     { &naive_desttile_simd_demo_5, "naive_desttile_simd_demo_5" },
+    { &tests::bicubic_simd::detail::run_all_tests_main, "tests::bicubic_simd::detail::run_all_tests_main" }
 };
 
 int select_execute_return(int argc, char** argv)

@@ -16,4 +16,10 @@ inline void run_all_tests()
     test_single_nonzero_clamp();
 }
 
+inline int run_all_tests_main(int, char**)
+{
+    run_all_tests();
+    return 0;
+}
+
 } // namespace(tests::bicubic_simd::detail)
