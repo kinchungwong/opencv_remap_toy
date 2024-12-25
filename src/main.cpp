@@ -61,7 +61,14 @@ int select_execute_return(int argc, char** argv)
     std::cout << "[A] run_all" << std::endl;
     std::cout << "Select index:" << std::endl;
     std::string response;
-    std::getline(std::cin, response);
+    if (1 < argc && argv[1] != nullptr && argv[1][0] != '\0')
+    {
+        response = argv[1];
+    }
+    else
+    {
+        std::getline(std::cin, response);
+    }
     response = str_trim(response);
     if (response == "A")
     {
