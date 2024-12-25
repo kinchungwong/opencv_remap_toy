@@ -179,6 +179,8 @@ void test_single_nonzero_clamp()
                         coefs_s16q8_xy_cpp[4] = weight_value;
                         effective_weight_product = weight_value * weight_value;
                         break;
+                    default:
+                        std::abort();
                 }
                 int32_t expected_q16 = src_value * effective_weight_product + (1 << 15);
                 bool unclamped_is_above = expected_q16 > (255 << 16);
