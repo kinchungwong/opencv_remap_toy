@@ -38,3 +38,7 @@ opencv_src
 opencv_src/
 opencv_build
 opencv_build/
+
+# Discarded or ignored code
+**/attic/
+**/no_commit/
