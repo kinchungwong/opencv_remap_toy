@@ -25,8 +25,8 @@ std::string str_trim(const std::string& s)
     {
         return {};
     }
-    size_t idx_last = s.find_first_not_of(spaces);
-    return s.substr(idx_first, idx_last - idx_first + 1UL);
+    size_t idx_last = s.find_last_not_of(spaces);
+    return s.substr(idx_first, idx_last - idx_first + 1u);
 }
 
 using MainFuncType = int(*)(int, char**);
