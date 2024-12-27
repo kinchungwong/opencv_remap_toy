@@ -5,25 +5,27 @@
 namespace opencv_remap::draft_1
 {
 
-template <class TBase>
-MappingAdapter<TBase>::MappingAdapter()
+MappingAdapter::MappingAdapter(MappingPtr base)
+    : m_base(base)
 {
-    const TBase& base = static_cast<TBase&>(*this);
-    auto base_caps = this->m_base_caps = base.caps();
-    auto base_min_caps = (base_caps & this->stc_min_caps);
+    if (!m_base)
+    {
+        throw std::invalid_argument("Expects base non-null.");
+    }
+    m_base_caps = m_base->caps();
+    auto base_min_caps = (m_base_caps & stc_min_caps);
     if (base_min_caps == CapFlags::None)
     {
         static const char* what = "Expects at least one of EvalFloatFloat EvalIntFixed in Base.";
         throw std::logic_error(what);
     }
-    this->m_adapted_caps = this->m_base_caps | this->stc_fulfilled_caps;
-    this->m_base_q_bits = base.num_q_bits();
-    this->m_adapted_q_bits = this->m_base_q_bits;
+    m_adapted_caps = m_base_caps | stc_fulfilled_caps;
+    m_base_q_bits = m_base->num_q_bits();
     if (base_min_caps == CapFlags::EvalFloatFloat)
     {
         // This class implements fixed-point in terms of float. num_q_bits can 
         // be chosen from any valid value (0 to 8 inclusive).
-        this->m_adapted_q_bits = 8;
+        m_adapted_q_bits = 8;
     }
     else
     {
@@ -31,50 +33,46 @@ MappingAdapter<TBase>::MappingAdapter()
         {
             // Float is implemented in terms of fixed-point.
             // Requires base num_q_bits value valid.
-            if (this->m_base_q_bits < 0 || this->m_base_q_bits > 8)
+            if (m_base_q_bits < 0 || m_base_q_bits > 8)
             {
                 static const char* what = "Invalid base num_q_bits value.";
                 throw std::logic_error(what);
             }
         }
         // If this line is reached, base num_q_bits is valid.
-    }
-}
-
-template <class TBase>
-MappingAdapter<TBase>::~MappingAdapter()
-{
-    // TODO
-}
-
-template <class TBase>
-MappingCapFlags MappingAdapter<TBase>::caps() const {
-    return this->m_adapted_caps;
-}
-
-template <class TBase>
-int MappingAdapter<TBase>::num_q_bits() const {
-    // TODO
-    return static_cast<TBase&>(*this).num_q_bits();
-}
-
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate(float dest_x, float dest_y, float& src_x, float& src_y) const
-{
-    const auto base_caps = this->m_base_caps;
-    const TBase& base = static_cast<TBase&>(*this);
-    if (has_all_caps(base_caps, MappingCapFlags::EvalFloatFloat))
-    {
-        return base.evaluate(dest_x, dest_y, src_x, src_y);
+        m_adapted_q_bits = m_base_q_bits;
     }
     //
-    // __assume(has_all_caps(base_caps, MappingCapFlags::EvalIntFixed))
+    // __assume(m_adapted_q_bits >= 0 && m_adapted_q_bits <= 8)
+    //
+}
+
+MappingAdapter::~MappingAdapter()
+{
+}
+
+MappingCapFlags MappingAdapter::caps() const {
+    return m_adapted_caps;
+}
+
+int MappingAdapter::num_q_bits() const {
+    return m_adapted_q_bits;
+}
+
+bool MappingAdapter::evaluate(float dest_x, float dest_y, float& src_x, float& src_y) const
+{
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalFloatFloat))
+    {
+        return m_base->evaluate(dest_x, dest_y, src_x, src_y);
+    }
+    //
+    // __assume(has_all_caps(m_base_caps, MappingCapFlags::EvalIntFixed))
     // __assume(base_q_bits >= 0 && base_q_bits <= 8)
     // Reason: checked by constructor.
     //
     int src_xq = 0;
     int src_yq = 0;
-    if (!base.evaluate_int(
+    if (!m_base->evaluate_int(
         static_cast<int>(dest_x), static_cast<int>(dest_y), src_xq, src_yq))
     {
         return false;
@@ -85,22 +83,19 @@ bool MappingAdapter<TBase>::evaluate(float dest_x, float dest_y, float& src_x, f
     return true;
 }
 
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate_int(int dest_x, int dest_y, int& src_xq, int& src_yq) const
+bool MappingAdapter::evaluate_int(int dest_x, int dest_y, int& src_xq, int& src_yq) const
 {
-    const auto base_caps = this->m_base_caps;
-    const TBase& base = static_cast<TBase&>(*this);
-    if (has_all_caps(base_caps, MappingCapFlags::EvalIntFixed))
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalIntFixed))
     {
-        return base.evaluate_int(dest_x, dest_y, src_xq, src_yq);
+        return m_base->evaluate_int(dest_x, dest_y, src_xq, src_yq);
     }
     //
-    // __assume(has_all_caps(base_caps, MappingCapFlags::EvalFloatFloat))
+    // __assume(has_all_caps(m_base_caps, MappingCapFlags::EvalFloatFloat))
     // Reason: checked by constructor.
     //
     float src_x = 0.0f;
     float src_y = 0.0f;
-    if (!base.evaluate(static_cast<float>(dest_x), static_cast<float>(dest_y), src_x, src_y))
+    if (!m_base->evaluate(static_cast<float>(dest_x), static_cast<float>(dest_y), src_x, src_y))
     {
         return false;
     }
@@ -110,15 +105,12 @@ bool MappingAdapter<TBase>::evaluate_int(int dest_x, int dest_y, int& src_xq, in
     return true;
 }
 
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate_arr(size_t pair_count, const float* arr_dest_xy, 
+bool MappingAdapter::evaluate_arr(size_t pair_count, const float* arr_dest_xy, 
     float* arr_src_xy) const
 {
-    const auto base_caps = this->m_base_caps;
-    if (has_all_caps(base_caps, MappingCapFlags::EvalArrFloatFloat))
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalArrFloatFloat))
     {
-        const TBase& base = static_cast<TBase&>(*this);
-        return base.evaluate_arr(pair_count, arr_dest_xy, arr_src_xy);
+        return m_base->evaluate_arr(pair_count, arr_dest_xy, arr_src_xy);
     }
     if (!pair_count && !arr_dest_xy && !arr_src_xy)
     {
@@ -155,15 +147,12 @@ bool MappingAdapter<TBase>::evaluate_arr(size_t pair_count, const float* arr_des
     return true;
 }
 
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate_arr_int(size_t pair_count, const int* arr_dest_xy, 
+bool MappingAdapter::evaluate_arr_int(size_t pair_count, const int* arr_dest_xy, 
     int* arr_src_xyq) const
 {
-    const auto base_caps = this->m_base_caps;
-    if (has_all_caps(base_caps, MappingCapFlags::EvalArrIntFixed))
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalArrIntFixed))
     {
-        const TBase& base = static_cast<TBase&>(*this);
-        return base.evaluate_arr_int(pair_count, arr_dest_xy, arr_src_xyq);
+        return m_base->evaluate_arr_int(pair_count, arr_dest_xy, arr_src_xyq);
     }
     if (!pair_count && !arr_dest_xy && !arr_src_xyq)
     {
@@ -200,14 +189,11 @@ bool MappingAdapter<TBase>::evaluate_arr_int(size_t pair_count, const int* arr_d
     return true;
 }
 
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate_rect(const cv::Rect& dest_rect, cv::Mat2f& src_xyf) const
+bool MappingAdapter::evaluate_rect(const cv::Rect& dest_rect, cv::Mat2f& src_xyf) const
 {
-    const auto base_caps = this->m_base_caps;
-    if (has_all_caps(base_caps, MappingCapFlags::EvalRectFloat))
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalRectFloat))
     {
-        const TBase& base = static_cast<TBase&>(*this);
-        return base.evaluate_rect(dest_rect, src_xyf);
+        return m_base->evaluate_rect(dest_rect, src_xyf);
     }
     if (dest_rect.width == 0 && dest_rect.height == 0 && src_xyf.empty())
     {
@@ -234,7 +220,7 @@ bool MappingAdapter<TBase>::evaluate_rect(const cv::Rect& dest_rect, cv::Mat2f& 
             float dest_y = static_cast<float>(tl.y + row);
             float src_x = 0.0f;
             float src_y = 0.0f;
-            if (!evaluate(dest_x, dest_y, src_x, src_y))
+            if (!this->evaluate(dest_x, dest_y, src_x, src_y))
             {
                 return false;
             }
@@ -243,14 +229,11 @@ bool MappingAdapter<TBase>::evaluate_rect(const cv::Rect& dest_rect, cv::Mat2f& 
     }
 }
 
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate_rect_int(const cv::Rect& dest_rect, cv::Mat2i& src_xyq) const
+bool MappingAdapter::evaluate_rect_int(const cv::Rect& dest_rect, cv::Mat2i& src_xyq) const
 {
-    const auto base_caps = this->m_base_caps;
-    if (has_all_caps(base_caps, MappingCapFlags::EvalRectFixed))
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalRectFixed))
     {
-        const TBase& base = static_cast<TBase&>(*this);
-        return base.evaluate_rect_int(dest_rect, src_xyq);
+        return m_base->evaluate_rect_int(dest_rect, src_xyq);
     }
     if (dest_rect.width == 0 && dest_rect.height == 0 && src_xyq.empty())
     {
@@ -277,7 +260,7 @@ bool MappingAdapter<TBase>::evaluate_rect_int(const cv::Rect& dest_rect, cv::Mat
             int dest_yi = tl.y + row;
             int src_xq = 0;
             int src_yq = 0;
-            if (!evaluate_int(dest_xi, dest_yi, src_xq, src_yq))
+            if (!this->evaluate_int(dest_xi, dest_yi, src_xq, src_yq))
             {
                 return false;
             }
@@ -286,14 +269,11 @@ bool MappingAdapter<TBase>::evaluate_rect_int(const cv::Rect& dest_rect, cv::Mat
     }
 }
 
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate_mat(const cv::Mat2f& dest_xyf, cv::Mat2f& src_xyf) const
+bool MappingAdapter::evaluate_mat(const cv::Mat2f& dest_xyf, cv::Mat2f& src_xyf) const
 {
-    const auto base_caps = this->m_base_caps;
-    if (has_all_caps(base_caps, MappingCapFlags::EvalMatFloatFloat))
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalMatFloatFloat))
     {
-        const TBase& base = static_cast<TBase&>(*this);
-        return base.evaluate_mat(dest_xyf, src_xyf);
+        return m_base->evaluate_mat(dest_xyf, src_xyf);
     }
     if (dest_xyf.empty() && src_xyf.empty())
     {
@@ -325,14 +305,11 @@ bool MappingAdapter<TBase>::evaluate_mat(const cv::Mat2f& dest_xyf, cv::Mat2f& s
     return true;
 }
 
-template <class TBase>
-bool MappingAdapter<TBase>::evaluate_mat_int(const cv::Mat2i& dest_xyi, cv::Mat2i& src_xyq) const
+bool MappingAdapter::evaluate_mat_int(const cv::Mat2i& dest_xyi, cv::Mat2i& src_xyq) const
 {
-    const auto base_caps = this->m_base_caps;
-    if (has_all_caps(base_caps, MappingCapFlags::EvalMatIntFixed))
+    if (has_all_caps(m_base_caps, MappingCapFlags::EvalMatIntFixed))
     {
-        const TBase& base = static_cast<TBase&>(*this);
-        return base.evaluate_mat_int(dest_xyi, src_xyq);
+        return m_base->evaluate_mat_int(dest_xyi, src_xyq);
     }
     if (dest_xyi.empty() && src_xyq.empty())
     {

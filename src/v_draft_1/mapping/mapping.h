@@ -5,11 +5,15 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <opencv2/core.hpp>
 #include "v_draft_1/mapping/mapping_capflags.h"
 
 namespace opencv_remap::draft_1
 {
+
+class Mapping;
+using MappingPtr = std::shared_ptr<Mapping>;
 
 /**
  * @brief Pure abstract base for mathematical mappings between two 2D

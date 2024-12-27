@@ -13,19 +13,19 @@ namespace opencv_remap::draft_1
 /**
  * @brief Automatic adapter for user-defined mappings, where all missing
  *        capabilities will be fulfilled in a straightforward way.
+ * 
+ * @remark This adapter is a decorator class, which means it wraps a 
+ *         user-provided instance of a base class that implements some
+ *         minimally required capabilities for Mapping.
+ *         Originally conceived as a mixin class (CRTP), but difficulties
+ *         arose which forced it to be switched back to become a decorator.
  */
-template <class TBase>
 class MappingAdapter
     : public Mapping
 {
-    static_assert(
-        std::is_base_of_v<Mapping, TBase>,
-        "Expects Base to implement Mapping.");
-
 public:
-    using Base = TBase;
     using CapFlags = MappingCapFlags;
-    MappingAdapter();
+    MappingAdapter(MappingPtr base);
     ~MappingAdapter();
 
 public:
@@ -94,6 +94,7 @@ public:
     bool evaluate_mat_int(const cv::Mat2i& dest_xyi, cv::Mat2i& src_xyq) const override;
 
 protected:
+    MappingPtr m_base;
     CapFlags m_base_caps = CapFlags::None;
     CapFlags m_adapted_caps = CapFlags::None;
     int m_base_q_bits = -1;
