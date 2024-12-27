@@ -114,6 +114,12 @@ template <class TBase>
 bool MappingAdapter<TBase>::evaluate_arr(size_t pair_count, const float* arr_dest_xy, 
     float* arr_src_xy) const
 {
+    const auto base_caps = this->m_base_caps;
+    if (has_all_caps(base_caps, MappingCapFlags::EvalArrFloatFloat))
+    {
+        const TBase& base = static_cast<TBase&>(*this);
+        return base.evaluate_arr(pair_count, arr_dest_xy, arr_src_xy);
+    }
     if (!pair_count && !arr_dest_xy && !arr_src_xy)
     {
         // Special case: a validly empty request returns true to indicate
@@ -153,6 +159,12 @@ template <class TBase>
 bool MappingAdapter<TBase>::evaluate_arr_int(size_t pair_count, const int* arr_dest_xy, 
     int* arr_src_xyq) const
 {
+    const auto base_caps = this->m_base_caps;
+    if (has_all_caps(base_caps, MappingCapFlags::EvalArrIntFixed))
+    {
+        const TBase& base = static_cast<TBase&>(*this);
+        return base.evaluate_arr_int(pair_count, arr_dest_xy, arr_src_xyq);
+    }
     if (!pair_count && !arr_dest_xy && !arr_src_xyq)
     {
         // Special case: a validly empty request returns true to indicate
@@ -191,6 +203,12 @@ bool MappingAdapter<TBase>::evaluate_arr_int(size_t pair_count, const int* arr_d
 template <class TBase>
 bool MappingAdapter<TBase>::evaluate_rect(const cv::Rect& dest_rect, cv::Mat2f& src_xyf) const
 {
+    const auto base_caps = this->m_base_caps;
+    if (has_all_caps(base_caps, MappingCapFlags::EvalRectFloat))
+    {
+        const TBase& base = static_cast<TBase&>(*this);
+        return base.evaluate_rect(dest_rect, src_xyf);
+    }
     if (dest_rect.width == 0 && dest_rect.height == 0 && src_xyf.empty())
     {
         // Special case: a validly empty request returns true to indicate
@@ -228,6 +246,12 @@ bool MappingAdapter<TBase>::evaluate_rect(const cv::Rect& dest_rect, cv::Mat2f& 
 template <class TBase>
 bool MappingAdapter<TBase>::evaluate_rect_int(const cv::Rect& dest_rect, cv::Mat2i& src_xyq) const
 {
+    const auto base_caps = this->m_base_caps;
+    if (has_all_caps(base_caps, MappingCapFlags::EvalRectFixed))
+    {
+        const TBase& base = static_cast<TBase&>(*this);
+        return base.evaluate_rect_int(dest_rect, src_xyq);
+    }
     if (dest_rect.width == 0 && dest_rect.height == 0 && src_xyq.empty())
     {
         // Special case: a validly empty request returns true to indicate
@@ -265,6 +289,12 @@ bool MappingAdapter<TBase>::evaluate_rect_int(const cv::Rect& dest_rect, cv::Mat
 template <class TBase>
 bool MappingAdapter<TBase>::evaluate_mat(const cv::Mat2f& dest_xyf, cv::Mat2f& src_xyf) const
 {
+    const auto base_caps = this->m_base_caps;
+    if (has_all_caps(base_caps, MappingCapFlags::EvalMatFloatFloat))
+    {
+        const TBase& base = static_cast<TBase&>(*this);
+        return base.evaluate_mat(dest_xyf, src_xyf);
+    }
     if (dest_xyf.empty() && src_xyf.empty())
     {
         // Special case: a validly empty request returns true to indicate
@@ -298,6 +328,12 @@ bool MappingAdapter<TBase>::evaluate_mat(const cv::Mat2f& dest_xyf, cv::Mat2f& s
 template <class TBase>
 bool MappingAdapter<TBase>::evaluate_mat_int(const cv::Mat2i& dest_xyi, cv::Mat2i& src_xyq) const
 {
+    const auto base_caps = this->m_base_caps;
+    if (has_all_caps(base_caps, MappingCapFlags::EvalMatIntFixed))
+    {
+        const TBase& base = static_cast<TBase&>(*this);
+        return base.evaluate_mat_int(dest_xyi, src_xyq);
+    }
     if (dest_xyi.empty() && src_xyq.empty())
     {
         // Special case: a validly empty request returns true to indicate
